@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Show";
+}
+
+<h2>Show</h2>
+
+<table>
+    <tr>
+        <td>
+            姓名：<input id="name" type="text" name="name" />
+        </td>
+
+        <td>
+            班级：<select id="Select1"></select>
+        </td>
+
+        <td><input type="submit" value="查询" onclick="Show()" class="btn btn-default" /></td>
+        <td><input type="submit" value="添加" onclick="location.href='/Stu/Add'" class="btn btn-danger" /></td>
+    </tr>
+</table>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>学生编号</th>
+            <th>学生姓名</th>
+            <th>学生性别</th>
+            <th>学生生日</th>
+            <th>学生班级</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody id="tb"></tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(function () {
+            Bandsel();
+            
+        })
+        function Bandsel() {
+            $.ajax({
+                url: 'http://localhost:51882/api/Class/',
+                type: 'get',
+                dataType: 'json',
+                success: function (d) {
+                    $("#Select1").empty();
+                    $("#Select1").append("<option value=''>--请选择--</option>");
+                    $(d).each(function () {
+                        var opt = "<option value=" + this.Cid + ">" + this.Cname + "</option>";
+                        $("#Select1").append(opt);
+                    })
+                    Show();
+                }
+            })
+        }
+
+
+        function Show() {
+            $.ajax({
+                url: 'http://localhost:51882/api/Stu/',
+                type: 'get',
+                dataType: 'json',
+                data: { cid: $("#Select1").val(), name: $("#name").val() },
+                success: function (d) {
+                    $("#tb").empty();
+                    $(d).each(function () {
+                        var line = '<tr>'
+                            + '<td>' + this.Sid + '</td>'
+                            + '<td>' + this.Sname + '</td>'
+                            + '<td>' + (this.Ssex ? "男" : "女") + '</td>'
+                            + '<td>' + this.Sbirthday + '</td>'
+                            + '<td>' + this.ClassModels.Cname + '</td>'
+                            + '<td>' + '<a href=javascript:; onclick=Del(' + this.Sid + ')>删除</a>'
+                            + '&nbsp;' + '<a href=/Stu/Upt/' + this.Sid + '>修改</a>'
+                            + '</td>'
+                            + '</tr>';
+                        $("#tb").append(line);
+                    })
+                }
+
+            })
+        }
+
+        function Del(id) {
+            $.ajax({
+                url: 'http://localhost:51882/api/Stu/' + id,
+                type: 'delete',
+                dataType: 'json',
+                success: function (d) {
+                    alert('删除成功！');
+                    location.href = '/Stu/Show';
+                }
+            })
+        }
+
+    </script>
+}

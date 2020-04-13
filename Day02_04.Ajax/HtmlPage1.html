@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script>
+        function Show(id) {
+            $.ajax({
+                url: 'http://localhost:51882/api/Stu/' + context.Request["id"],
+                type: 'get',
+                dataType: 'json',
+                success: function (d) {
+                    $("#Sname").val(d.Sname);
+                    if (d.Ssex) {
+                        Radio1.checked = true;
+                    }
+                    else {
+                        Radio2.checked = true;
+                    }
+                    $("#Select1").val(d.ClassModelCid);
+                    $("#Sbirthday").val(d.Sbirthday);
+                }
+            })
+        }
+    </script>
+</body>
+</html>
